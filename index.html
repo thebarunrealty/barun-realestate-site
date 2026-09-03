@@ -128,27 +128,40 @@ h2{font-size:clamp(26px,4.6vw,44px);font-weight:800;letter-spacing:-.03em;margin
   background-position:right center;
   background-size:cover;
   /* image-set 을 모르는 브라우저는 이 줄에서 멈춘다 — jpg 로 뜬다 */
-  background-image:
-    linear-gradient(100deg,rgba(20,24,31,.95) 0%,rgba(20,24,31,.82) 32%,rgba(20,24,31,.42) 62%,rgba(20,24,31,.18) 100%),
-    linear-gradient(180deg,rgba(20,24,31,.88) 0%,rgba(20,24,31,.30) 28%,transparent 52%),
-    radial-gradient(110% 75% at 82% 24%,rgba(255,107,94,.12) 0%,transparent 60%),
-    url('assets/hero-seoul.jpg');
+  background-image:url('assets/hero-seoul.jpg');
 }
 @supports (background-image:image-set(url('assets/hero-seoul.webp') type('image/webp'))){
   .hero-media{
-    background-image:
-      linear-gradient(100deg,rgba(20,24,31,.95) 0%,rgba(20,24,31,.82) 32%,rgba(20,24,31,.42) 62%,rgba(20,24,31,.18) 100%),
-      linear-gradient(180deg,rgba(20,24,31,.88) 0%,rgba(20,24,31,.30) 28%,transparent 52%),
-      radial-gradient(110% 75% at 82% 24%,rgba(255,107,94,.12) 0%,transparent 60%),
-      image-set(url('assets/hero-seoul.webp') type('image/webp'),
-                url('assets/hero-seoul.jpg')  type('image/jpeg'));
+    background-image:image-set(url('assets/hero-seoul.webp') type('image/webp'),
+                               url('assets/hero-seoul.jpg')  type('image/jpeg'));
   }
+}
+/* 영상 — 데스크톱에서만 이미지 위에 덮인다. 못 틀면 아래 이미지가 그대로 보인다 */
+.hero-video{
+  position:absolute;inset:0;z-index:0;
+  width:100%;height:100%;
+  object-fit:cover;object-position:right center;
+}
+/* 스크림은 사진·영상 **위**에 있어야 한다. 배경에 넣어 두면 영상이 덮어써
+   왼쪽 글자 자리가 밝아진다. 장식이 아니라 가독성 장치다 */
+.hero-scrim{
+  position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:
+    linear-gradient(100deg,rgba(20,24,31,.95) 0%,rgba(20,24,31,.82) 32%,rgba(20,24,31,.42) 62%,rgba(20,24,31,.18) 100%),
+    linear-gradient(180deg,rgba(20,24,31,.88) 0%,rgba(20,24,31,.30) 28%,transparent 52%),
+    radial-gradient(110% 75% at 82% 24%,rgba(255,107,94,.12) 0%,transparent 60%);
 }
 /* 세로 화면에서는 cover 가 가로를 크게 잘라낸다. 도시가 촘촘한 오른쪽 아래를 남긴다 */
 @media (max-width:720px){
   .hero-media{background-position:72% center}
+  .hero-video{display:none}          /* 휴대폰은 이미지 그대로 — 데이터·발열 */
 }
-.hero-media::after{                     /* 배경에 깔리는 거래량 추이(자리표시) */
+@media (prefers-reduced-motion:reduce){
+  .hero-video{display:none}
+}
+/* 거래량 추이 오버레이는 **스크림 층**에 붙인다. .hero-media 에 두면 영상이 덮어
+   데스크톱에서 사라진다(영상 도입 때 실제로 그렇게 됐다). */
+.hero-scrim::after{
   content:'';position:absolute;left:0;right:0;bottom:0;height:46%;
   background:url('assets/report/04-trend.png') center 62% / 118% no-repeat;
   opacity:.10;filter:grayscale(.5) blur(1.4px);
@@ -157,11 +170,11 @@ h2{font-size:clamp(26px,4.6vw,44px);font-weight:800;letter-spacing:-.03em;margin
   mask-image:linear-gradient(180deg,transparent 0%,#000 34%,#000 74%,transparent 100%);
 }
 .media-tag{
-  position:absolute;left:var(--gut);bottom:22px;z-index:2;
+  position:absolute;left:var(--gut);bottom:22px;z-index:3;
   font:600 10px/1 var(--num);letter-spacing:.14em;color:var(--muted);
   border:1px dashed var(--slate);border-radius:999px;padding:7px 12px;
 }
-#ch1 .inner{position:relative;z-index:1}
+#ch1 .inner{position:relative;z-index:2}
 .hero-kicker{color:var(--coral);font-weight:700;font-size:13px;letter-spacing:.14em;margin:0 0 18px}
 .hero-h{font-size:clamp(30px,5.6vw,58px);font-weight:800;letter-spacing:-.035em;line-height:1.14;margin:0 0 30px}
 .bignum{
@@ -279,7 +292,12 @@ footer a.mail:hover{text-decoration:underline}
   <!-- ① 지금 서울은 -->
   <section class="ch" id="ch1">
     <div class="hero-media" aria-hidden="true"></div>
-    <span class="media-tag">배경 이미지 생성 완료 — 영상은 이 컷을 첫 장면으로 예정</span>
+    <video class="hero-video" autoplay loop muted playsinline preload="metadata"
+           poster="assets/hero-seoul.jpg" aria-hidden="true" tabindex="-1">
+      <source src="assets/hero-seoul.mp4" type="video/mp4">
+    </video>
+    <div class="hero-scrim" aria-hidden="true"></div>
+    <span class="media-tag">배경 영상 — 데스크톱만 재생 · 휴대폰은 같은 컷의 정지 이미지</span>
     <div class="inner">
       <p class="hero-kicker">서울 25개 자치구 · 매주 갱신</p>
       <h1 class="hero-h">지금 서울은<br>이렇게 거래되고 있습니다.</h1>
