@@ -53,10 +53,11 @@ header{
 .wordmark{display:flex;flex-direction:column;line-height:1.15;min-width:0}
 .wordmark b{font-size:17px;font-weight:800;letter-spacing:-.02em;white-space:nowrap}
 .wordmark span{font-size:10px;color:var(--muted);letter-spacing:.06em;white-space:nowrap}
+/* 로고 마크. 원본은 마크 위 / 글자 아래로 세로로 쌓인 형태라, 가로 헤더에서는
+   마크만 떼어 쓰고 글자는 옆에 텍스트로 세운다(세로 로고를 34px 로 줄이면
+   "공인중개사사무소" 가 읽히지 않는다). 전체 로고는 푸터에서 쓴다. */
 .brand-mark{
-  width:34px;height:34px;flex:0 0 34px;border-radius:9px;
-  background:var(--coral);color:var(--ink);
-  display:grid;place-items:center;font-weight:800;font-size:17px;
+  height:36px;width:auto;flex:0 0 auto;
 }
 .hd-actions{display:flex;align-items:center;gap:10px;flex-shrink:0}
 .btn{
@@ -126,8 +127,11 @@ h2{font-size:clamp(26px,4.6vw,44px);font-weight:800;letter-spacing:-.03em;margin
 }
 .hero-media::after{                     /* 배경에 깔리는 거래량 추이(자리표시) */
   content:'';position:absolute;left:0;right:0;bottom:0;height:46%;
-  background:url('assets/report/04-trend.png') center bottom / cover no-repeat;
-  opacity:.12;filter:grayscale(.3);
+  background:url('assets/report/04-trend.png') center 62% / 118% no-repeat;
+  opacity:.16;filter:grayscale(.45) blur(1.2px);
+  /* 글자까지 읽히면 배경이 아니라 또 하나의 콘텐츠가 된다. 위아래를 흐려 선만 남긴다 */
+  -webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 34%,#000 74%,transparent 100%);
+  mask-image:linear-gradient(180deg,transparent 0%,#000 34%,#000 74%,transparent 100%);
 }
 .media-tag{
   position:absolute;left:var(--gut);bottom:22px;z-index:2;
@@ -201,6 +205,7 @@ footer{
 }
 footer .fnote{font-size:12px;color:var(--muted);line-height:1.9;max-width:52ch}
 footer .fnote b{color:var(--paper);display:block;font-size:14px;margin-bottom:6px}
+footer .foot-logo{height:74px;width:auto;margin-bottom:16px}
 footer a.mail{color:var(--coral);text-decoration:none;font-weight:600}
 footer a.mail:hover{text-decoration:underline}
 
@@ -229,8 +234,7 @@ footer a.mail:hover{text-decoration:underline}
 
 <header>
   <a class="brand" href="#ch1">
-    <!-- 로고 PNG 를 받으면 이 두 요소를 <img src="assets/logo.png" alt="바른부동산"> 하나로 교체 -->
-    <span class="brand-mark" aria-hidden="true">바</span>
+    <img class="brand-mark" src="assets/logo-mark.png" alt="" width="214" height="190">
     <span class="wordmark"><b>바른부동산</b><span>공인중개사사무소</span></span>
   </a>
   <div class="hd-actions">
@@ -352,7 +356,7 @@ footer a.mail:hover{text-decoration:underline}
 
 <footer>
   <p class="fnote">
-    <b>바른부동산 공인중개사사무소</b>
+    <img class="foot-logo" src="assets/logo-light.png" alt="바른부동산 공인중개사사무소" width="214" height="300">
     데이터 출처 — 국토교통부 RTMS 실거래가, 서울 열린데이터광장 정비사업 현황.<br>
     계약일 기준이며 신고 지연으로 최근 2개월은 잠정치입니다.
   </p>
