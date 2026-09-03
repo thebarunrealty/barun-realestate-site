@@ -95,9 +95,18 @@ section.ch{
   min-height:100svh;scroll-snap-align:start;
   padding:96px var(--gut) 72px;
   display:flex;flex-direction:column;justify-content:center;
-  border-bottom:1px solid var(--slate);position:relative;overflow:hidden;
+  position:relative;overflow:hidden;
 }
-section.ch:nth-child(even){background:var(--ink-2)}
+/* 짝수 챕터의 한 단 밝은 바탕. 예전에는 background 를 통째로 바꿔 깔았는데,
+   그러면 챕터가 바뀌는 지점에서 밝기가 칼같이 잘려 가로 단차로 보인다(ΔL 8.7).
+   같은 색을 반투명 층으로 얹고 위·아래를 투명으로 빼면 단차 없이 같은 리듬이 남는다.
+   rgba 값은 #14181F 위에 5% 로 얹었을 때 #1B212B 가 나오도록 잡았다. */
+section.ch:nth-child(even)::after{
+  content:'';position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:rgba(160,204,255,.05);
+  -webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 22%,#000 78%,transparent 100%);
+  mask-image:linear-gradient(180deg,transparent 0%,#000 22%,#000 78%,transparent 100%);
+}
 .inner{position:relative;z-index:1;width:100%;max-width:1080px;margin:0 auto}
 
 /* 챕터 ②~⑤ 배경 — 히어로와 같은 사진을 거의 안 보이게 깐다.
@@ -111,6 +120,10 @@ section.ch:nth-child(even){background:var(--ink-2)}
   background-repeat:no-repeat;
   opacity:.2;
   filter:blur(8px) saturate(.5) brightness(.72);
+  /* 위·아래 끝을 투명으로 빼 바탕색에 녹인다. 이게 없으면 챕터가 바뀌는 지점에서
+     사진 밝기가 그대로 잘려 가로 단차로 보인다(4→5 경계에서 특히). */
+  -webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 20%,#000 80%,transparent 100%);
+  mask-image:linear-gradient(180deg,transparent 0%,#000 20%,#000 80%,transparent 100%);
 }
 #ch2::before{background-position:14% 22%;background-size:135%}
 #ch3::before{background-position:80% 40%;background-size:120%}
