@@ -10,6 +10,10 @@
   `npm run report` 산출물을 복사한 것(2026-09-03 수집분).
   "최근 신고분"은 직전 수집(8/31) 대비 새로 들어온 824건이다
 - `assets/fonts/plex-mono-*.woff2` — 숫자용 IBM Plex Mono. 한글 Pretendard 는 CDN
+- `assets/hero-seoul.png` — 히어로 배경 원본(2752×1536, Nano Banana Pro 생성).
+  **지우지 말 것** — 영상화할 때 첫 장면으로 쓴다
+- `assets/hero-seoul.webp` / `.jpg` — 웹용 축소본(2400×1340). 화면은 webp 를 쓰고
+  `image-set` 을 모르는 브라우저는 jpg 로 떨어진다
 
 ## 색
 
@@ -36,5 +40,6 @@
 
 ## 아직 안 된 것
 
-- **히어로 배경 영상** — 그라데이션 자리표시. `.hero-media` 를 `<video>` 로 교체
+- **히어로 배경 영상** — 배경 이미지는 들어갔다. 영상이 나오면 `.hero-media` 를
+  `<video poster="assets/hero-seoul.jpg">` 로 바꾸고 이미지를 poster 로 남긴다
 - **자치구 필터** — 자치구별 데이터를 싣지 않아 선택값이 표시와 대시보드 링크에만 반영된다

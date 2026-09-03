@@ -117,18 +117,41 @@ h2{font-size:clamp(26px,4.6vw,44px);font-weight:800;letter-spacing:-.03em;margin
 
 /* ── ① 히어로 ──────────────────────────────────────── */
 #ch1{justify-content:center;text-align:left}
-/* 영상 자리 — 생성 전까지 잉크 네이비 그라데이션으로 비워 둔다 */
+/* 히어로 배경 — Nano Banana Pro 로 생성한 서울 야경.
+   나중에 이 컷을 첫 장면으로 영상화하면 <video> 로 바뀐다.
+   사진 위에 어둡게 깔린 두 겹은 장식이 아니라 흰 글자를 읽히게 하는 스크림이다:
+   왼쪽(글자 자리)이 가장 어둡고 오른쪽 도시 쪽으로 열린다. */
 .hero-media{
   position:absolute;inset:0;z-index:0;
-  background:
-    radial-gradient(120% 80% at 78% 18%,rgba(255,107,94,.16) 0%,transparent 58%),
-    radial-gradient(90% 70% at 12% 88%,rgba(107,168,255,.12) 0%,transparent 60%),
-    linear-gradient(168deg,#10141B 0%,#14181F 46%,#1B212B 100%);
+  background-color:var(--ink);
+  background-repeat:no-repeat;
+  background-position:right center;
+  background-size:cover;
+  /* image-set 을 모르는 브라우저는 이 줄에서 멈춘다 — jpg 로 뜬다 */
+  background-image:
+    linear-gradient(100deg,rgba(20,24,31,.95) 0%,rgba(20,24,31,.82) 32%,rgba(20,24,31,.42) 62%,rgba(20,24,31,.18) 100%),
+    linear-gradient(180deg,rgba(20,24,31,.88) 0%,rgba(20,24,31,.30) 28%,transparent 52%),
+    radial-gradient(110% 75% at 82% 24%,rgba(255,107,94,.12) 0%,transparent 60%),
+    url('assets/hero-seoul.jpg');
+}
+@supports (background-image:image-set(url('assets/hero-seoul.webp') type('image/webp'))){
+  .hero-media{
+    background-image:
+      linear-gradient(100deg,rgba(20,24,31,.95) 0%,rgba(20,24,31,.82) 32%,rgba(20,24,31,.42) 62%,rgba(20,24,31,.18) 100%),
+      linear-gradient(180deg,rgba(20,24,31,.88) 0%,rgba(20,24,31,.30) 28%,transparent 52%),
+      radial-gradient(110% 75% at 82% 24%,rgba(255,107,94,.12) 0%,transparent 60%),
+      image-set(url('assets/hero-seoul.webp') type('image/webp'),
+                url('assets/hero-seoul.jpg')  type('image/jpeg'));
+  }
+}
+/* 세로 화면에서는 cover 가 가로를 크게 잘라낸다. 도시가 촘촘한 오른쪽 아래를 남긴다 */
+@media (max-width:720px){
+  .hero-media{background-position:72% center}
 }
 .hero-media::after{                     /* 배경에 깔리는 거래량 추이(자리표시) */
   content:'';position:absolute;left:0;right:0;bottom:0;height:46%;
   background:url('assets/report/04-trend.png') center 62% / 118% no-repeat;
-  opacity:.16;filter:grayscale(.45) blur(1.2px);
+  opacity:.10;filter:grayscale(.5) blur(1.4px);
   /* 글자까지 읽히면 배경이 아니라 또 하나의 콘텐츠가 된다. 위아래를 흐려 선만 남긴다 */
   -webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 34%,#000 74%,transparent 100%);
   mask-image:linear-gradient(180deg,transparent 0%,#000 34%,#000 74%,transparent 100%);
@@ -256,7 +279,7 @@ footer a.mail:hover{text-decoration:underline}
   <!-- ① 지금 서울은 -->
   <section class="ch" id="ch1">
     <div class="hero-media" aria-hidden="true"></div>
-    <span class="media-tag">배경 영상 자리 — 생성 전</span>
+    <span class="media-tag">배경 이미지 생성 완료 — 영상은 이 컷을 첫 장면으로 예정</span>
     <div class="inner">
       <p class="hero-kicker">서울 25개 자치구 · 매주 갱신</p>
       <h1 class="hero-h">지금 서울은<br>이렇게 거래되고 있습니다.</h1>
