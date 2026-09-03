@@ -7,7 +7,8 @@
 
 - `index.html` — 사이트 전부. CSS·JS 인라인
 - `assets/report/*.png` — 리포트 이미지 5장. seoul-property-dashboard 의
-  `npm run report` 산출물을 복사한 것(2026-08-15 렌더, 2026-08-13 수집분)
+  `npm run report` 산출물을 복사한 것(2026-09-03 수집분).
+  "최근 신고분"은 직전 수집(8/31) 대비 새로 들어온 824건이다
 - `assets/fonts/plex-mono-*.woff2` — 숫자용 IBM Plex Mono. 한글 Pretendard 는 CDN
 
 ## 색
