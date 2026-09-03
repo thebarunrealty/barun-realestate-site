@@ -98,7 +98,30 @@ section.ch{
   border-bottom:1px solid var(--slate);position:relative;overflow:hidden;
 }
 section.ch:nth-child(even){background:var(--ink-2)}
-.inner{width:100%;max-width:1080px;margin:0 auto}
+.inner{position:relative;z-index:1;width:100%;max-width:1080px;margin:0 auto}
+
+/* 챕터 ②~⑤ 배경 — 히어로와 같은 사진을 거의 안 보이게 깐다.
+   주인공은 리포트 이미지와 글자다. 사진은 히어로에서 이어진다는 신호만 준다.
+   inset 을 음수로 준 이유: blur 는 가장자리를 흐려 투명하게 만든다. 화면 밖으로
+   밀어내야 테두리에 뿌연 띠가 안 생긴다.
+   챕터마다 위치와 배율을 다르게 줘 같은 그림이 네 번 반복되는 느낌을 지운다. */
+#ch2::before,#ch3::before,#ch4::before,#ch5::before{
+  content:'';position:absolute;inset:-40px;z-index:0;pointer-events:none;
+  background-image:url('assets/hero-seoul.jpg');
+  background-repeat:no-repeat;
+  opacity:.2;
+  filter:blur(8px) saturate(.5) brightness(.72);
+}
+#ch2::before{background-position:14% 22%;background-size:135%}
+#ch3::before{background-position:80% 40%;background-size:120%}
+#ch4::before{background-position:32% 80%;background-size:155%}
+#ch5::before{background-position:94% 60%;background-size:128%}
+@supports (background-image:image-set(url('assets/hero-seoul.webp') type('image/webp'))){
+  #ch2::before,#ch3::before,#ch4::before,#ch5::before{
+    background-image:image-set(url('assets/hero-seoul.webp') type('image/webp'),
+                               url('assets/hero-seoul.jpg')  type('image/jpeg'));
+  }
+}
 .ch-no{
   font:700 12px/1 var(--num);color:var(--coral);letter-spacing:.18em;
   display:block;margin-bottom:14px;
@@ -168,11 +191,6 @@ h2{font-size:clamp(26px,4.6vw,44px);font-weight:800;letter-spacing:-.03em;margin
   /* 글자까지 읽히면 배경이 아니라 또 하나의 콘텐츠가 된다. 위아래를 흐려 선만 남긴다 */
   -webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 34%,#000 74%,transparent 100%);
   mask-image:linear-gradient(180deg,transparent 0%,#000 34%,#000 74%,transparent 100%);
-}
-.media-tag{
-  position:absolute;left:var(--gut);bottom:22px;z-index:3;
-  font:600 10px/1 var(--num);letter-spacing:.14em;color:var(--muted);
-  border:1px dashed var(--slate);border-radius:999px;padding:7px 12px;
 }
 #ch1 .inner{position:relative;z-index:2}
 .hero-kicker{color:var(--coral);font-weight:700;font-size:13px;letter-spacing:.14em;margin:0 0 18px}
@@ -297,7 +315,6 @@ footer a.mail:hover{text-decoration:underline}
       <source src="assets/hero-seoul.mp4" type="video/mp4">
     </video>
     <div class="hero-scrim" aria-hidden="true"></div>
-    <span class="media-tag">배경 영상 — 데스크톱만 재생 · 휴대폰은 같은 컷의 정지 이미지</span>
     <div class="inner">
       <p class="hero-kicker">서울 25개 자치구 · 매주 갱신</p>
       <h1 class="hero-h">지금 서울은<br>이렇게 거래되고 있습니다.</h1>
