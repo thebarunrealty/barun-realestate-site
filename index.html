@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>바른부동산 — 서울 실거래 리포트</title>
+<meta name="description" content="서울 25개 자치구 실거래 데이터를 매주 정리해 보여 드립니다. 바른부동산 공인중개사사무소.">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+/* ── 폰트 ───────────────────────────────────────────── */
+@font-face{font-family:'Plex Mono';src:url('assets/fonts/plex-mono-400.woff2') format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'Plex Mono';src:url('assets/fonts/plex-mono-600.woff2') format('woff2');font-weight:600;font-display:swap}
+@font-face{font-family:'Plex Mono';src:url('assets/fonts/plex-mono-700.woff2') format('woff2');font-weight:700;font-display:swap}
+
+/* ── 색 ─────────────────────────────────────────────
+   대시보드 리포트 모드의 팔레트를 그대로 승격시켰다.
+   포인트는 코랄 하나. --fall 은 데이터 영역 안에서만 쓴다(읽기 규칙이지 브랜드색이 아니다). */
+:root{
+  --ink:#14181F;        /* 바탕 */
+  --ink-2:#1B212B;      /* 한 단 밝은 바탕 */
+  --paper:#E8ECF2;      /* 글자 */
+  --slate:#3E4756;      /* 구분선·카드 테두리 */
+  --muted:#8B95A5;
+  --coral:#FF6B5E;      /* 포인트 — 하나만 */
+  --fall:#6BA8FF;       /* 데이터 영역 전용 예외 */
+  --kr:'Pretendard Variable',Pretendard,'Apple SD Gothic Neo',system-ui,sans-serif;
+  --num:'Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --gut:clamp(20px,5vw,64px);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--ink);color:var(--paper);font-family:var(--kr);
+  line-height:1.6;-webkit-font-smoothing:antialiased;
+  overflow-x:hidden;              /* 휴대폰 가로 스크롤 차단 */
+}
+img{max-width:100%;height:auto;display:block}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--coral);outline-offset:3px}
+
+/* ── 헤더 ───────────────────────────────────────────── */
+header{
+  position:fixed;inset:0 0 auto 0;z-index:60;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:14px var(--gut);
+  background:rgba(20,24,31,.82);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--slate);
+}
+.brand{display:flex;align-items:center;gap:10px;min-width:0;text-decoration:none}
+.brand img{height:34px;width:auto}
+/* 로고 파일이 오면 .wordmark 를 <img class="logo"> 로 교체한다 */
+.wordmark{display:flex;flex-direction:column;line-height:1.15;min-width:0}
+.wordmark b{font-size:17px;font-weight:800;letter-spacing:-.02em;white-space:nowrap}
+.wordmark span{font-size:10px;color:var(--muted);letter-spacing:.06em;white-space:nowrap}
+.brand-mark{
+  width:34px;height:34px;flex:0 0 34px;border-radius:9px;
+  background:var(--coral);color:var(--ink);
+  display:grid;place-items:center;font-weight:800;font-size:17px;
+}
+.hd-actions{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.btn{
+  font:600 13px/1 var(--kr);padding:9px 14px;border-radius:999px;
+  border:1px solid var(--slate);background:transparent;color:var(--paper);
+  text-decoration:none;cursor:pointer;white-space:nowrap;
+  transition:border-color .15s,background .15s,color .15s;
+}
+.btn:hover{border-color:var(--coral);color:var(--coral)}
+.btn-solid{background:var(--coral);border-color:var(--coral);color:var(--ink)}
+.btn-solid:hover{background:#ff8478;border-color:#ff8478;color:var(--ink)}
+@media (max-width:640px){.hd-actions .btn.hide-sm{display:none}}
+
+/* ── 챕터 인디케이터 ───────────────────────────────── */
+nav.dots{
+  position:fixed;right:calc(var(--gut) / 2);top:50%;transform:translateY(-50%);
+  z-index:55;display:flex;flex-direction:column;gap:14px;
+}
+nav.dots a{
+  width:9px;height:9px;border-radius:50%;background:var(--slate);
+  display:block;transition:background .2s,transform .2s;position:relative;
+}
+nav.dots a[aria-current="true"]{background:var(--coral);transform:scale(1.35)}
+nav.dots a span{
+  position:absolute;right:18px;top:50%;transform:translateY(-50%);
+  font-size:11px;color:var(--muted);white-space:nowrap;opacity:0;
+  transition:opacity .2s;pointer-events:none;
+}
+nav.dots a:hover span{opacity:1}
+@media (max-width:900px){nav.dots{display:none}}
+
+/* ── 챕터 공통 ─────────────────────────────────────── */
+main{scroll-snap-type:y proximity}
+section.ch{
+  min-height:100svh;scroll-snap-align:start;
+  padding:96px var(--gut) 72px;
+  display:flex;flex-direction:column;justify-content:center;
+  border-bottom:1px solid var(--slate);position:relative;overflow:hidden;
+}
+section.ch:nth-child(even){background:var(--ink-2)}
+.inner{width:100%;max-width:1080px;margin:0 auto}
+.ch-no{
+  font:700 12px/1 var(--num);color:var(--coral);letter-spacing:.18em;
+  display:block;margin-bottom:14px;
+}
+h2{font-size:clamp(26px,4.6vw,44px);font-weight:800;letter-spacing:-.03em;margin:0 0 12px;line-height:1.2}
+.lead{color:var(--muted);font-size:clamp(14px,1.6vw,17px);margin:0 0 28px;max-width:62ch}
+.num{font-family:var(--num);font-variant-numeric:tabular-nums}
+
+/* 스크롤 진입 연출 */
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .reveal{opacity:1;transform:none;transition:none}
+}
+
+/* ── ① 히어로 ──────────────────────────────────────── */
+#ch1{justify-content:center;text-align:left}
+/* 영상 자리 — 생성 전까지 잉크 네이비 그라데이션으로 비워 둔다 */
+.hero-media{
+  position:absolute;inset:0;z-index:0;
+  background:
+    radial-gradient(120% 80% at 78% 18%,rgba(255,107,94,.16) 0%,transparent 58%),
+    radial-gradient(90% 70% at 12% 88%,rgba(107,168,255,.12) 0%,transparent 60%),
+    linear-gradient(168deg,#10141B 0%,#14181F 46%,#1B212B 100%);
+}
+.hero-media::after{                     /* 배경에 깔리는 거래량 추이(자리표시) */
+  content:'';position:absolute;left:0;right:0;bottom:0;height:46%;
+  background:url('assets/report/04-trend.png') center bottom / cover no-repeat;
+  opacity:.12;filter:grayscale(.3);
+}
+.media-tag{
+  position:absolute;left:var(--gut);bottom:22px;z-index:2;
+  font:600 10px/1 var(--num);letter-spacing:.14em;color:var(--muted);
+  border:1px dashed var(--slate);border-radius:999px;padding:7px 12px;
+}
+#ch1 .inner{position:relative;z-index:1}
+.hero-kicker{color:var(--coral);font-weight:700;font-size:13px;letter-spacing:.14em;margin:0 0 18px}
+.hero-h{font-size:clamp(30px,5.6vw,58px);font-weight:800;letter-spacing:-.035em;line-height:1.14;margin:0 0 30px}
+.bignum{
+  font-family:var(--num);font-weight:700;
+  font-size:clamp(58px,13vw,148px);line-height:.92;letter-spacing:-.045em;
+  display:flex;align-items:baseline;gap:.12em;margin:0 0 10px;
+}
+.bignum em{font-style:normal;font-size:.26em;font-weight:600;color:var(--muted);font-family:var(--kr)}
+.hero-sub{color:var(--muted);font-size:14px;margin:0 0 34px}
+.hero-sub b{color:var(--paper);font-weight:600}
+.hero-cta{display:flex;flex-wrap:wrap;gap:10px}
+
+/* ── 리포트 이미지 카드 ─────────────────────────────── */
+.shot{
+  border:1px solid var(--slate);border-radius:14px;overflow:hidden;
+  background:var(--ink);cursor:zoom-in;position:relative;
+  max-width:860px;
+}
+.shot img{width:100%}
+.shot figcaption{
+  position:absolute;right:10px;bottom:10px;
+  font:600 10px/1 var(--num);letter-spacing:.1em;color:var(--paper);
+  background:rgba(20,24,31,.78);border:1px solid var(--slate);
+  border-radius:999px;padding:6px 10px;
+}
+.stats{display:flex;flex-wrap:wrap;gap:10px 30px;margin:0 0 24px;padding:0;list-style:none}
+.stats li{font-size:13px;color:var(--muted)}
+.stats b{display:block;font-family:var(--num);font-size:clamp(20px,3vw,28px);font-weight:700;color:var(--paper);letter-spacing:-.02em}
+.stats .up b{color:var(--coral)}
+.stats .down b{color:var(--fall)}   /* 데이터 영역 안에서만 쓰는 예외 */
+
+/* ── 자치구 필터 ───────────────────────────────────── */
+.filter{margin:0 0 26px}
+.filter-h{font-size:12px;color:var(--muted);margin:0 0 10px;letter-spacing:.04em}
+.chips{display:flex;flex-wrap:wrap;gap:7px;padding:0;margin:0;list-style:none}
+.chip{
+  font:500 12px/1 var(--kr);padding:8px 12px;border-radius:999px;
+  border:1px solid var(--slate);background:transparent;color:var(--muted);cursor:pointer;
+  transition:border-color .15s,color .15s,background .15s;
+}
+.chip:hover{color:var(--paper);border-color:var(--paper)}
+.chip[aria-pressed="true"]{background:var(--coral);border-color:var(--coral);color:var(--ink);font-weight:700}
+.filter-out{
+  margin-top:14px;font-size:13px;color:var(--muted);
+  display:flex;flex-wrap:wrap;align-items:center;gap:10px;
+}
+.filter-out b{color:var(--paper)}
+
+/* ── 내려받기 ───────────────────────────────────────── */
+.dl{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;padding:0;margin:22px 0 0;list-style:none}
+.dl a{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  border:1px solid var(--slate);border-radius:11px;padding:13px 15px;
+  text-decoration:none;font-size:13px;transition:border-color .15s,color .15s;
+}
+.dl a:hover{border-color:var(--coral);color:var(--coral)}
+.dl span{font:600 10px/1 var(--num);color:var(--muted);letter-spacing:.08em}
+.dl a:hover span{color:var(--coral)}
+
+/* ── 푸터 ───────────────────────────────────────────── */
+footer{
+  padding:56px var(--gut) 72px;background:var(--ink);
+  display:flex;flex-wrap:wrap;gap:28px;justify-content:space-between;align-items:flex-start;
+}
+footer .fnote{font-size:12px;color:var(--muted);line-height:1.9;max-width:52ch}
+footer .fnote b{color:var(--paper);display:block;font-size:14px;margin-bottom:6px}
+footer a.mail{color:var(--coral);text-decoration:none;font-weight:600}
+footer a.mail:hover{text-decoration:underline}
+
+/* ── 확대 오버레이 ─────────────────────────────────── */
+.lb{
+  position:fixed;inset:0;z-index:90;display:none;
+  background:rgba(10,12,16,.94);padding:22px;
+  overflow:auto;-webkit-overflow-scrolling:touch;cursor:zoom-out;
+}
+.lb.on{display:block}
+.lb img{margin:0 auto;max-width:100%;width:auto}
+.lb-close{
+  position:fixed;top:16px;right:16px;z-index:91;
+  width:42px;height:42px;border-radius:50%;
+  border:1px solid var(--slate);background:rgba(20,24,31,.9);color:var(--paper);
+  font-size:19px;line-height:1;cursor:pointer;
+}
+.lb-hint{
+  position:fixed;left:50%;transform:translateX(-50%);bottom:18px;z-index:91;
+  font-size:11px;color:var(--muted);background:rgba(20,24,31,.9);
+  border:1px solid var(--slate);border-radius:999px;padding:7px 13px;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a class="brand" href="#ch1">
+    <!-- 로고 PNG 를 받으면 이 두 요소를 <img src="assets/logo.png" alt="바른부동산"> 하나로 교체 -->
+    <span class="brand-mark" aria-hidden="true">바</span>
+    <span class="wordmark"><b>바른부동산</b><span>공인중개사사무소</span></span>
+  </a>
+  <div class="hd-actions">
+    <a class="btn hide-sm" href="https://byoneself4023-bit.github.io/seoul-property-dashboard/" target="_blank" rel="noopener">대시보드</a>
+    <a class="btn btn-solid" href="mailto:byoneself4023@ajou.ac.kr?subject=%EB%B0%94%EB%A5%B8%EB%B6%80%EB%8F%99%EC%82%B0%20%EB%AC%B8%EC%9D%98">문의하기</a>
+  </div>
+</header>
+
+<nav class="dots" aria-label="챕터 이동">
+  <a href="#ch1" data-dot="ch1" aria-current="true"><span>지금 서울은</span></a>
+  <a href="#ch2" data-dot="ch2"><span>신고가·신저가</span></a>
+  <a href="#ch3" data-dot="ch3"><span>어디가 가장 많이 팔렸나</span></a>
+  <a href="#ch4" data-dot="ch4"><span>아파트 말고</span></a>
+  <a href="#ch5" data-dot="ch5"><span>동네가 바뀐다</span></a>
+</nav>
+
+<main>
+
+  <!-- ① 지금 서울은 -->
+  <section class="ch" id="ch1">
+    <div class="hero-media" aria-hidden="true"></div>
+    <span class="media-tag">배경 영상 자리 — 생성 전</span>
+    <div class="inner">
+      <p class="hero-kicker">서울 25개 자치구 · 매주 갱신</p>
+      <h1 class="hero-h">지금 서울은<br>이렇게 거래되고 있습니다.</h1>
+      <p class="bignum"><span>424</span><em>건</em></p>
+      <p class="hero-sub">최근 신고분 · 수집일 <b class="num">2026-08-13</b> · 국토교통부 RTMS 실거래가</p>
+      <div class="hero-cta">
+        <a class="btn btn-solid" href="#ch2">리포트 보기</a>
+        <a class="btn" href="https://byoneself4023-bit.github.io/seoul-property-dashboard/" target="_blank" rel="noopener">대시보드 열기</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ② 신고가·신저가 -->
+  <section class="ch" id="ch2">
+    <div class="inner">
+      <span class="ch-no reveal">CHAPTER 02</span>
+      <h2 class="reveal">신고가·신저가</h2>
+      <p class="lead reveal">같은 단지, 같은 평형에서 기록을 깬 거래만 골랐습니다. 취소 신고·직거래·1986년 이전 준공은 뺐습니다.</p>
+      <ul class="stats reveal">
+        <li class="up"><b class="num">80</b>신고가</li>
+        <li class="down"><b class="num">4</b>신저가</li>
+        <li><b class="num">161,776</b>기준 거래 (2024년 1월 이후)</li>
+      </ul>
+      <figure class="shot reveal" data-zoom="assets/report/01-records.png">
+        <img src="assets/report/01-records.png" alt="아파트 신고가·신저가 리포트" loading="lazy" width="2160" height="2608">
+        <figcaption>탭하면 확대</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ③ 어디가 가장 많이 팔렸나 -->
+  <section class="ch" id="ch3">
+    <div class="inner">
+      <span class="ch-no reveal">CHAPTER 03</span>
+      <h2 class="reveal">어디가 가장 많이 팔렸나</h2>
+      <p class="lead reveal">자치구 · 법정동 · 단지 세 단위로 누적 거래 건수를 셌습니다. 이 장만 기간 기준이 다릅니다 — 2024년 1월 이후 누적입니다.</p>
+
+      <div class="filter reveal">
+        <p class="filter-h">자치구 선택</p>
+        <ul class="chips" id="chips"></ul>
+        <p class="filter-out">
+          <span>선택: <b id="picked">서울 전체</b></span>
+          <a class="btn" id="goDash" href="https://byoneself4023-bit.github.io/seoul-property-dashboard/" target="_blank" rel="noopener">대시보드에서 이 자치구 보기</a>
+        </p>
+      </div>
+
+      <figure class="shot reveal" data-zoom="assets/report/02-rank.png">
+        <img src="assets/report/02-rank.png" alt="거래 1위 리포트" loading="lazy" width="2160" height="1438">
+        <figcaption>탭하면 확대</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ④ 아파트 말고 -->
+  <section class="ch" id="ch4">
+    <div class="inner">
+      <span class="ch-no reveal">CHAPTER 04</span>
+      <h2 class="reveal">아파트 말고</h2>
+      <p class="lead reveal">연립·다세대와 오피스텔입니다. 단독·다가구는 건물명과 면적이 없어 비교가 안 되므로 뺐습니다.</p>
+      <ul class="stats reveal">
+        <li><b class="num">67,706</b>연립·다세대 거래</li>
+        <li><b class="num">21,801</b>오피스텔 거래</li>
+      </ul>
+      <figure class="shot reveal" data-zoom="assets/report/03-nonapt.png">
+        <img src="assets/report/03-nonapt.png" alt="비아파트 리포트" loading="lazy" width="2160" height="2958">
+        <figcaption>탭하면 확대</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ⑤ 동네가 바뀐다 -->
+  <section class="ch" id="ch5">
+    <div class="inner">
+      <span class="ch-no reveal">CHAPTER 05</span>
+      <h2 class="reveal">동네가 바뀐다</h2>
+      <p class="lead reveal">정비사업 신규 지정과 해제입니다. 서울 열린데이터광장 고시 자료를 씁니다. 이 장은 월 1회 갱신합니다.</p>
+      <ul class="stats reveal">
+        <li class="up"><b class="num">131</b>신규 지정</li>
+        <li class="down"><b class="num">33</b>해제</li>
+      </ul>
+      <figure class="shot reveal" data-zoom="assets/report/05-rebuild.png">
+        <img src="assets/report/05-rebuild.png" alt="정비사업 리포트" loading="lazy" width="2160" height="2104">
+        <figcaption>탭하면 확대</figcaption>
+      </figure>
+
+      <ul class="dl reveal">
+        <li><a href="assets/report/01-records.png" download="바른부동산_신고가신저가.png">신고가·신저가 <span>PNG</span></a></li>
+        <li><a href="assets/report/02-rank.png" download="바른부동산_거래1위.png">거래 1위 <span>PNG</span></a></li>
+        <li><a href="assets/report/03-nonapt.png" download="바른부동산_비아파트.png">비아파트 <span>PNG</span></a></li>
+        <li><a href="assets/report/04-trend.png" download="바른부동산_거래량추이.png">거래량 추이 <span>PNG</span></a></li>
+        <li><a href="assets/report/05-rebuild.png" download="바른부동산_정비사업.png">정비사업 <span>PNG</span></a></li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p class="fnote">
+    <b>바른부동산 공인중개사사무소</b>
+    데이터 출처 — 국토교통부 RTMS 실거래가, 서울 열린데이터광장 정비사업 현황.<br>
+    계약일 기준이며 신고 지연으로 최근 2개월은 잠정치입니다.
+  </p>
+  <p class="fnote">
+    <b>문의</b>
+    <a class="mail" href="mailto:byoneself4023@ajou.ac.kr?subject=%EB%B0%94%EB%A5%B8%EB%B6%80%EB%8F%99%EC%82%B0%20%EB%AC%B8%EC%9D%98">메일 보내기</a><br>
+    <a class="mail" href="https://byoneself4023-bit.github.io/seoul-property-dashboard/" target="_blank" rel="noopener">대시보드 전체 보기</a>
+  </p>
+</footer>
+
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="리포트 확대 보기">
+  <img id="lbImg" src="" alt="">
+</div>
+<button class="lb-close" id="lbClose" hidden aria-label="닫기">✕</button>
+<p class="lb-hint" id="lbHint" hidden>손가락으로 넓혀 확대 · 배경을 탭하면 닫힘</p>
+
+<script>
+/* ── 자치구 필터 ──────────────────────────────────────
+   시안 단계라 자치구별 데이터를 이 페이지에 싣지 않았다.
+   선택값은 표시와 대시보드 링크에만 반영한다. */
+var DISTRICTS = ['서울 전체','종로구','중구','용산구','성동구','광진구','동대문구','중랑구','성북구',
+  '강북구','도봉구','노원구','은평구','서대문구','마포구','양천구','강서구','구로구','금천구',
+  '영등포구','동작구','관악구','서초구','강남구','송파구','강동구'];
+var DASH = 'https://byoneself4023-bit.github.io/seoul-property-dashboard/';
+var chips = document.getElementById('chips');
+var picked = document.getElementById('picked');
+var goDash = document.getElementById('goDash');
+
+DISTRICTS.forEach(function (name, i) {
+  var li = document.createElement('li');
+  var b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'chip';
+  b.textContent = name;
+  b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false');
+  b.addEventListener('click', function () {
+    chips.querySelectorAll('.chip').forEach(function (c) { c.setAttribute('aria-pressed', 'false'); });
+    b.setAttribute('aria-pressed', 'true');
+    picked.textContent = name;
+    goDash.href = i === 0 ? DASH : DASH + '?district=' + encodeURIComponent(name);
+    goDash.textContent = i === 0 ? '대시보드에서 보기' : '대시보드에서 ' + name + ' 보기';
+    try { localStorage.setItem('barun.district', name); } catch (e) {}
+  });
+  li.appendChild(b);
+  chips.appendChild(li);
+});
+try {
+  var saved = localStorage.getItem('barun.district');
+  if (saved) {
+    var hit = Array.prototype.find.call(chips.querySelectorAll('.chip'), function (c) { return c.textContent === saved; });
+    if (hit) hit.click();
+  }
+} catch (e) {}
+
+/* ── 리포트 확대 ─────────────────────────────────── */
+var lb = document.getElementById('lb'), lbImg = document.getElementById('lbImg');
+var lbClose = document.getElementById('lbClose'), lbHint = document.getElementById('lbHint');
+function openLb(src, alt) {
+  lbImg.src = src; lbImg.alt = alt || '';
+  lb.classList.add('on'); lbClose.hidden = false; lbHint.hidden = false;
+  document.body.style.overflow = 'hidden';
+}
+function closeLb() {
+  lb.classList.remove('on'); lbClose.hidden = true; lbHint.hidden = true;
+  document.body.style.overflow = '';
+}
+document.querySelectorAll('.shot').forEach(function (fig) {
+  fig.addEventListener('click', function () {
+    openLb(fig.dataset.zoom, fig.querySelector('img').alt);
+  });
+});
+lb.addEventListener('click', closeLb);
+lbClose.addEventListener('click', closeLb);
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeLb(); });
+
+/* ── 스크롤 연출 · 챕터 인디케이터 ───────────────── */
+var revealObs = new IntersectionObserver(function (entries) {
+  entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); revealObs.unobserve(en.target); } });
+}, { rootMargin: '0px 0px -12% 0px' });
+document.querySelectorAll('.reveal').forEach(function (el) { revealObs.observe(el); });
+
+var dots = document.querySelectorAll('nav.dots a');
+var chObs = new IntersectionObserver(function (entries) {
+  entries.forEach(function (en) {
+    if (!en.isIntersecting) return;
+    dots.forEach(function (d) { d.setAttribute('aria-current', String(d.dataset.dot === en.target.id)); });
+  });
+}, { threshold: .5 });
+document.querySelectorAll('section.ch').forEach(function (s) { chObs.observe(s); });
+</script>
+</body>
+</html>
