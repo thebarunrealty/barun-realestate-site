@@ -14,9 +14,12 @@
   **지우지 말 것** — 영상화할 때 첫 장면으로 쓴다
 - `assets/hero-seoul.webp` / `.jpg` — 웹용 축소본(2400×1340). 화면은 webp 를 쓰고
   `image-set` 을 모르는 브라우저는 jpg 로 떨어진다. jpg 는 영상의 poster 도 겸한다
-- `assets/hero-seoul.mp4` — 히어로 배경 영상(1920×1080, 8.04초, 무음, 6.1MB).
-  Seedance 2.0 에 위 PNG 를 start_image·end_image 로 함께 넣어 만들었다 —
-  끝 프레임이 첫 프레임으로 돌아와야 `loop` 이음새가 안 보인다.
+- `assets/hero-seoul-raw.mp4` — Seedance 2.0 출력 원본(1920×1080, 8.04초, 무음, 6.1MB).
+  위 PNG 를 start_image·end_image 로 함께 넣어 만들었다 — 끝 프레임이 첫 프레임으로
+  돌아와야 `loop` 이음새가 안 보인다. **보관용. 화면은 이 파일을 쓰지 않는다**
+- `assets/hero-seoul.mp4` — 화면이 쓰는 웹용(H.264 CRF 26, faststart, 무음, 820KB).
+  `ffmpeg -i hero-seoul-raw.mp4 -c:v libx264 -crf 26 -preset slow -pix_fmt yuv420p \
+   -movflags +faststart -an hero-seoul.mp4` 로 만든다. 원본 대비 87% 작다.
   **데스크톱에서만 재생된다.** 휴대폰(≤720px)과 모션 최소화 설정에서는 `display:none`
   이고 그 아래 `.hero-media` 이미지가 그대로 보인다
 
@@ -45,8 +48,4 @@
 
 ## 아직 안 된 것
 
-- **영상 파일 최적화** — mp4 가 6.1MB 이고 `moov` 가 파일 끝에 있다(faststart 아님).
-  이 맥에 ffmpeg 이 없어 손대지 않았다. 깔면
-  `ffmpeg -i hero-seoul.mp4 -c:v libx264 -crf 26 -movflags +faststart -an out.mp4`
-  로 용량과 첫 재생 지연을 함께 줄일 수 있다
 - **자치구 필터** — 자치구별 데이터를 싣지 않아 선택값이 표시와 대시보드 링크에만 반영된다
