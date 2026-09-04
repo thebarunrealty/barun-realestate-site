@@ -1,7 +1,9 @@
 # 바른부동산 — 브랜드 사이트 시안
 
 서울 실거래 리포트를 챕터 5개로 보여 주는 한 페이지 사이트. 정적 파일만 쓴다(빌드 없음).
-배포는 Nestify 정적 호스팅 전제라 GitHub Actions 워크플로를 두지 않는다.
+배포는 GitHub Pages 자동 발행이다 — main 에 push 하면
+`.github/workflows/deploy.yml` 이 저장소 루트를 그대로 올린다.
+발행 주소: https://byoneself4023-bit.github.io/barun-realestate-site/
 
 ## 파일
 

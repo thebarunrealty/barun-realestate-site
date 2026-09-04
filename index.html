@@ -214,6 +214,9 @@ h2{font-size:clamp(26px,4.6vw,44px);font-weight:800;letter-spacing:-.03em;margin
   display:flex;align-items:baseline;gap:.12em;margin:0 0 10px;
 }
 .bignum em{font-style:normal;font-size:.26em;font-weight:600;color:var(--muted);font-family:var(--kr)}
+/* 신규 유입분이 0일 때 — 숫자 대신 문구. 숫자용 폰트와 148px 을 벗고 제목 크기로 내린다 */
+.bignum.pending{font-family:var(--kr);font-weight:800;font-size:clamp(26px,4.6vw,46px);letter-spacing:-.035em;line-height:1.2;color:var(--muted)}
+.bignum.pending em{display:none}
 .hero-sub{color:var(--muted);font-size:14px;margin:0 0 34px}
 .hero-sub b{color:var(--paper);font-weight:600}
 .hero-cta{display:flex;flex-wrap:wrap;gap:10px}
@@ -535,7 +538,15 @@ window.addEventListener('DOMContentLoaded', function () {
   if (!d) return;
   var count = d.report && d.report.meta && d.report.meta.targetCount;
   if (typeof count === 'number') {
-    document.getElementById('heroCount').textContent = count.toLocaleString('ko-KR');
+    var el = document.getElementById('heroCount');
+    if (count > 0) {
+      el.textContent = count.toLocaleString('ko-KR');
+      el.parentNode.classList.remove('pending');
+    } else {
+      /* 신규 유입분이 0 — 숫자를 0으로 보여 주면 고장으로 읽힌다 */
+      el.textContent = '이번 주 집계 중';
+      el.parentNode.classList.add('pending');
+    }
   }
   if (d.generatedAt) {
     document.getElementById('heroDate').textContent = d.generatedAt;
