@@ -1,3 +1,6 @@
 .DS_Store
 node_modules/
 *.log
+
+# 시안·검증 스크린샷 — 로컬 작업용. 발행에 넣지 않는다
+dashboard/screenshots/
