@@ -109,8 +109,8 @@ section.ch:nth-child(even)::after{
 }
 .inner{position:relative;z-index:1;width:100%;max-width:1080px;margin:0 auto}
 
-/* 챕터 ②~⑤ 배경 — 히어로와 같은 사진을 거의 안 보이게 깐다.
-   주인공은 리포트 이미지와 글자다. 사진은 히어로에서 이어진다는 신호만 준다.
+/* 챕터 ②~⑤ 배경 — 히어로와 같은 사진을 옅게 깐다.
+   주인공은 여전히 리포트 이미지와 글자다. 사진은 히어로에서 이어진다는 신호를 준다.
    inset 을 음수로 준 이유: blur 는 가장자리를 흐려 투명하게 만든다. 화면 밖으로
    밀어내야 테두리에 뿌연 띠가 안 생긴다.
    챕터마다 위치와 배율을 다르게 줘 같은 그림이 네 번 반복되는 느낌을 지운다. */
@@ -118,17 +118,24 @@ section.ch:nth-child(even)::after{
   content:'';position:absolute;inset:-40px;z-index:0;pointer-events:none;
   background-image:url('assets/hero-seoul.jpg');
   background-repeat:no-repeat;
-  opacity:.2;
-  filter:blur(8px) saturate(.5) brightness(.72);
+  opacity:.35;
+  /* 원본 야경은 평균 밝기가 바탕색(#14181F)과 거의 같다. 그래서 불투명도만 올려서는
+     아무것도 안 보인다(20%→35% 로 올려도 화면상 차이가 없었다). 사진을 밝혀
+     바탕과 밝기 차를 만들어야 건물 실루엣이 읽힌다. 흐림은 그대로 8px. */
+  filter:blur(8px) saturate(.65) brightness(1.55);
   /* 위·아래 끝을 투명으로 빼 바탕색에 녹인다. 이게 없으면 챕터가 바뀌는 지점에서
-     사진 밝기가 그대로 잘려 가로 단차로 보인다(4→5 경계에서 특히). */
-  -webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 20%,#000 80%,transparent 100%);
-  mask-image:linear-gradient(180deg,transparent 0%,#000 20%,#000 80%,transparent 100%);
+     사진 밝기가 그대로 잘려 가로 단차로 보인다(4→5 경계에서 특히).
+     20%/80% 는 사진이 보일 구간을 카드가 덮는 가운데로만 몰아 넣어 결국 안 보였다.
+     8%/92% 로 넓혀 카드 위아래 여백에서 도시가 드러나게 한다. */
+  -webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 8%,#000 92%,transparent 100%);
+  mask-image:linear-gradient(180deg,transparent 0%,#000 8%,#000 92%,transparent 100%);
 }
-#ch2::before{background-position:14% 22%;background-size:135%}
-#ch3::before{background-position:80% 40%;background-size:120%}
-#ch4::before{background-position:32% 80%;background-size:155%}
-#ch5::before{background-position:94% 60%;background-size:128%}
+/* 세로 위치는 도시가 있는 아래쪽 절반에서 고른다. 원본은 위 45% 가 빈 하늘이라
+   그쪽을 잡으면 아무것도 없는 회색 면만 깔린다(원래 ch2 가 22% 였다). */
+#ch2::before{background-position:14% 82%;background-size:135%}
+#ch3::before{background-position:80% 88%;background-size:120%}
+#ch4::before{background-position:32% 72%;background-size:155%}
+#ch5::before{background-position:94% 78%;background-size:128%}
 @supports (background-image:image-set(url('assets/hero-seoul.webp') type('image/webp'))){
   #ch2::before,#ch3::before,#ch4::before,#ch5::before{
     background-image:image-set(url('assets/hero-seoul.webp') type('image/webp'),
