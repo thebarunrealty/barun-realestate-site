@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>바른부동산 — 서울 실거래 리포트</title>
 <meta name="description" content="서울 25개 자치구 실거래 데이터를 매주 정리해 보여 드립니다. 바른부동산 공인중개사사무소.">
+<!-- 파비콘 — 로고 마크. 마크만 투명 배경으로 쓰면 옅은 파랑 선이 흰 탭에서 사라진다.
+     바탕색(#14181F) 타일 위에 얹어 밝은 탭·어두운 탭 양쪽에서 읽히게 했다. -->
+<link rel="icon" href="favicon.ico" sizes="48x48">
+<link rel="icon" href="assets/favicon.png" type="image/png" sizes="512x512">
+<link rel="apple-touch-icon" href="assets/favicon.png">
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
@@ -69,7 +74,6 @@ header{
 .btn:hover{border-color:var(--coral);color:var(--coral)}
 .btn-solid{background:var(--coral);border-color:var(--coral);color:var(--ink)}
 .btn-solid:hover{background:#ff8478;border-color:#ff8478;color:var(--ink)}
-@media (max-width:640px){.hd-actions .btn.hide-sm{display:none}}
 
 /* ── 챕터 인디케이터 ───────────────────────────────── */
 nav.dots{
@@ -235,12 +239,6 @@ h2{font-size:clamp(26px,4.6vw,44px);font-weight:800;letter-spacing:-.03em;margin
   max-width:860px;
 }
 .shot img{width:100%}
-.shot figcaption{
-  position:absolute;right:10px;bottom:10px;
-  font:600 10px/1 var(--num);letter-spacing:.1em;color:var(--paper);
-  background:rgba(20,24,31,.78);border:1px solid var(--slate);
-  border-radius:999px;padding:6px 10px;
-}
 .stats{display:flex;flex-wrap:wrap;gap:10px 30px;margin:0 0 24px;padding:0;list-style:none}
 .stats li{font-size:13px;color:var(--muted)}
 .stats b{display:block;font-family:var(--num);font-size:clamp(20px,3vw,28px);font-weight:700;color:var(--paper);letter-spacing:-.02em}
@@ -262,7 +260,6 @@ h2{font-size:clamp(26px,4.6vw,44px);font-weight:800;letter-spacing:-.03em;margin
   margin-top:14px;font-size:13px;color:var(--muted);
   display:flex;flex-wrap:wrap;align-items:center;gap:10px;
 }
-.filter-out b{color:var(--paper)}
 
 /* ── 내려받기 ───────────────────────────────────────── */
 .dl{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;padding:0;margin:22px 0 0;list-style:none}
@@ -281,10 +278,7 @@ footer{
   display:flex;flex-wrap:wrap;gap:28px;justify-content:space-between;align-items:flex-start;
 }
 footer .fnote{font-size:12px;color:var(--muted);line-height:1.9;max-width:52ch}
-footer .fnote b{color:var(--paper);display:block;font-size:14px;margin-bottom:6px}
 footer .foot-logo{height:74px;width:auto;margin-bottom:16px}
-footer a.mail{color:var(--coral);text-decoration:none;font-weight:600}
-footer a.mail:hover{text-decoration:underline}
 
 /* ── 확대 오버레이 ─────────────────────────────────── */
 .lb{
@@ -300,11 +294,6 @@ footer a.mail:hover{text-decoration:underline}
   border:1px solid var(--slate);background:rgba(20,24,31,.9);color:var(--paper);
   font-size:19px;line-height:1;cursor:pointer;
 }
-.lb-hint{
-  position:fixed;left:50%;transform:translateX(-50%);bottom:18px;z-index:91;
-  font-size:11px;color:var(--muted);background:rgba(20,24,31,.9);
-  border:1px solid var(--slate);border-radius:999px;padding:7px 13px;
-}
 </style>
 </head>
 <body>
@@ -315,8 +304,7 @@ footer a.mail:hover{text-decoration:underline}
     <span class="wordmark"><b>바른부동산</b><span>공인중개사사무소</span></span>
   </a>
   <div class="hd-actions">
-    <a class="btn hide-sm" href="https://byoneself4023-bit.github.io/seoul-property-dashboard/" target="_blank" rel="noopener">대시보드</a>
-    <a class="btn btn-solid" href="mailto:byoneself4023@ajou.ac.kr?subject=%EB%B0%94%EB%A5%B8%EB%B6%80%EB%8F%99%EC%82%B0%20%EB%AC%B8%EC%9D%98">문의하기</a>
+    <a class="btn btn-solid" href="https://byoneself4023-bit.github.io/seoul-property-dashboard/" target="_blank" rel="noopener">대시보드</a>
   </div>
 </header>
 
@@ -365,7 +353,6 @@ footer a.mail:hover{text-decoration:underline}
            높이는 주마다 달라지므로 width/height 를 고정하지 않는다. -->
       <figure class="shot reveal" data-zoom="https://byoneself4023-bit.github.io/seoul-property-dashboard/reports/latest/01.png">
         <img src="https://byoneself4023-bit.github.io/seoul-property-dashboard/reports/latest/01.png" alt="아파트 신고가·신저가 리포트" loading="lazy">
-        <figcaption>탭하면 확대</figcaption>
       </figure>
     </div>
   </section>
@@ -381,14 +368,12 @@ footer a.mail:hover{text-decoration:underline}
         <p class="filter-h">자치구 선택</p>
         <ul class="chips" id="chips"></ul>
         <p class="filter-out">
-          <span>선택: <b id="picked">서울 전체</b></span>
-          <a class="btn" id="goDash" href="https://byoneself4023-bit.github.io/seoul-property-dashboard/" target="_blank" rel="noopener">대시보드에서 이 자치구 보기</a>
+          <a class="btn" id="goDash" href="https://byoneself4023-bit.github.io/seoul-property-dashboard/" target="_blank" rel="noopener">대시보드에서 보기</a>
         </p>
       </div>
 
       <figure class="shot reveal" data-zoom="https://byoneself4023-bit.github.io/seoul-property-dashboard/reports/latest/02.png">
         <img src="https://byoneself4023-bit.github.io/seoul-property-dashboard/reports/latest/02.png" alt="거래 1위 리포트" loading="lazy">
-        <figcaption>탭하면 확대</figcaption>
       </figure>
     </div>
   </section>
@@ -405,7 +390,6 @@ footer a.mail:hover{text-decoration:underline}
       </ul>
       <figure class="shot reveal" data-zoom="https://byoneself4023-bit.github.io/seoul-property-dashboard/reports/latest/03.png">
         <img src="https://byoneself4023-bit.github.io/seoul-property-dashboard/reports/latest/03.png" alt="비아파트 리포트" loading="lazy">
-        <figcaption>탭하면 확대</figcaption>
       </figure>
     </div>
   </section>
@@ -422,7 +406,6 @@ footer a.mail:hover{text-decoration:underline}
       </ul>
       <figure class="shot reveal" data-zoom="https://byoneself4023-bit.github.io/seoul-property-dashboard/reports/latest/05.png">
         <img src="https://byoneself4023-bit.github.io/seoul-property-dashboard/reports/latest/05.png" alt="정비사업 리포트" loading="lazy">
-        <figcaption>탭하면 확대</figcaption>
       </figure>
 
       <ul class="dl reveal">
@@ -445,29 +428,24 @@ footer a.mail:hover{text-decoration:underline}
     데이터 출처 — 국토교통부 RTMS 실거래가, 서울 열린데이터광장 정비사업 현황.<br>
     계약일 기준이며 신고 지연으로 최근 2개월은 잠정치입니다.
   </p>
-  <p class="fnote">
-    <b>문의</b>
-    <a class="mail" href="mailto:byoneself4023@ajou.ac.kr?subject=%EB%B0%94%EB%A5%B8%EB%B6%80%EB%8F%99%EC%82%B0%20%EB%AC%B8%EC%9D%98">메일 보내기</a><br>
-    <a class="mail" href="https://byoneself4023-bit.github.io/seoul-property-dashboard/" target="_blank" rel="noopener">대시보드 전체 보기</a>
-  </p>
 </footer>
 
 <div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="리포트 확대 보기">
   <img id="lbImg" src="" alt="">
 </div>
 <button class="lb-close" id="lbClose" hidden aria-label="닫기">✕</button>
-<p class="lb-hint" id="lbHint" hidden>손가락으로 넓혀 확대 · 배경을 탭하면 닫힘</p>
 
 <script>
 /* ── 자치구 필터 ──────────────────────────────────────
    시안 단계라 자치구별 데이터를 이 페이지에 싣지 않았다.
-   선택값은 표시와 대시보드 링크에만 반영한다. */
+   칩을 누르면 아래 버튼의 링크가 그 자치구로 바뀐다 — 그게 이 칩이 하는 일 전부다.
+   대시보드는 ?district= 가 아니라 **주소 해시**로 자치구를 받는다(대시보드 v2Restore).
+   쿼리로 보내면 자치구가 조용히 버려져 칩을 눌러도 아무 일이 없다. */
 var DISTRICTS = ['서울 전체','종로구','중구','용산구','성동구','광진구','동대문구','중랑구','성북구',
   '강북구','도봉구','노원구','은평구','서대문구','마포구','양천구','강서구','구로구','금천구',
   '영등포구','동작구','관악구','서초구','강남구','송파구','강동구'];
 var DASH = 'https://byoneself4023-bit.github.io/seoul-property-dashboard/';
 var chips = document.getElementById('chips');
-var picked = document.getElementById('picked');
 var goDash = document.getElementById('goDash');
 
 DISTRICTS.forEach(function (name, i) {
@@ -480,8 +458,7 @@ DISTRICTS.forEach(function (name, i) {
   b.addEventListener('click', function () {
     chips.querySelectorAll('.chip').forEach(function (c) { c.setAttribute('aria-pressed', 'false'); });
     b.setAttribute('aria-pressed', 'true');
-    picked.textContent = name;
-    goDash.href = i === 0 ? DASH : DASH + '?district=' + encodeURIComponent(name);
+    goDash.href = i === 0 ? DASH : DASH + '#' + encodeURIComponent(name);
     goDash.textContent = i === 0 ? '대시보드에서 보기' : '대시보드에서 ' + name + ' 보기';
     try { localStorage.setItem('barun.district', name); } catch (e) {}
   });
@@ -498,14 +475,14 @@ try {
 
 /* ── 리포트 확대 ─────────────────────────────────── */
 var lb = document.getElementById('lb'), lbImg = document.getElementById('lbImg');
-var lbClose = document.getElementById('lbClose'), lbHint = document.getElementById('lbHint');
+var lbClose = document.getElementById('lbClose');
 function openLb(src, alt) {
   lbImg.src = src; lbImg.alt = alt || '';
-  lb.classList.add('on'); lbClose.hidden = false; lbHint.hidden = false;
+  lb.classList.add('on'); lbClose.hidden = false;
   document.body.style.overflow = 'hidden';
 }
 function closeLb() {
-  lb.classList.remove('on'); lbClose.hidden = true; lbHint.hidden = true;
+  lb.classList.remove('on'); lbClose.hidden = true;
   document.body.style.overflow = '';
 }
 document.querySelectorAll('.shot').forEach(function (fig) {
