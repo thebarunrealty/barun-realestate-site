@@ -51,3 +51,10 @@
 ## 아직 안 된 것
 
 - **자치구 필터** — 자치구별 데이터를 싣지 않아 선택값이 표시와 대시보드 링크에만 반영된다
+
+## 넘겨받을 때 알 것 (2026-11-14)
+
+- 발행: GitHub Pages(`.github/workflows`), 주소 https://report.thebarunrealty.com
+- **대시보드에 의존한다.** 리포트 그림(`reports/latest/01~05.png`)·`data.js`·「대시보드」 버튼을 https://stats.thebarunrealty.com 에서 가져온다. 대시보드 주소나 파일 경로가 바뀌면 `index.html` 을 같이 고친다(2026-11-14 저장소 조직 이전 때 옛 github.io 주소가 404 가 되어 고쳤다).
+- DNS 는 대표님 Netlify 에서 관리한다. report. 의 CNAME 은 `thebarunrealty.github.io` 로 바꾸는 것이 맞다(지금은 `byoneself4023-bit.github.io`, 동작은 정상).
+- 키·비밀값 없음.
